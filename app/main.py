@@ -42,8 +42,7 @@ def brute_force_password() -> None:
     password_set = set(PASSWORDS_TO_BRUTE_FORCE)
     total = 100_000_000
     count_cpu = 0
-    print(bool(0))
-    if not psutil.cpu_count():
+    if not psutil.cpu_count() or psutil.cpu_count() == 1:
         count_cpu = 1
     else:
         count_cpu = psutil.cpu_count() - 1
