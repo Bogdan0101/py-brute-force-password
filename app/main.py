@@ -1,6 +1,5 @@
 import time
 import psutil
-import multiprocessing
 from concurrent.futures import ProcessPoolExecutor, wait
 from hashlib import sha256
 
@@ -25,7 +24,12 @@ def sha256_hash_str(to_hash: str) -> str:
     return sha_64_str
 
 
-def search_password(start: int, end: int, cpu: int, password_set: set[str]) -> None:
+def search_password(
+        start: int,
+        end: int,
+        cpu: int,
+        password_set: set[str]
+) -> None:
     print(f"start CPU: {cpu}. {start} - {end}")
     for combination in range(start, end):
         combination = str(f"{combination:08d}")
@@ -37,12 +41,17 @@ def search_password(start: int, end: int, cpu: int, password_set: set[str]) -> N
 def brute_force_password() -> None:
     password_set = set(PASSWORDS_TO_BRUTE_FORCE)
     total = 100_000_000
-    count_cpu = psutil.cpu_count() - 1
+    count_cpu = 0
+    print(bool(0))
+    if not psutil.cpu_count():
+        count_cpu = 1
+    else:
+        count_cpu = psutil.cpu_count() - 1
     range_for_cpu = 100_000_000 // count_cpu
     start = 0
     end = range_for_cpu
     tasks = []
-    with ProcessPoolExecutor(multiprocessing.cpu_count() - 1) as executor:
+    with ProcessPoolExecutor(count_cpu) as executor:
         for cpu in range(count_cpu):
             cpu += 1
             if cpu < count_cpu:
